@@ -3,6 +3,7 @@ import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import * as path from 'path';
 import { appendToExcel } from '@/utils/append-to-excel';
+import { convertAllImagesToBase64 } from './utils/url-to-data-uri';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const puppeteer = require('puppeteer');
 
@@ -76,13 +77,13 @@ export class ScrapingService {
         ratingCountsSelector,
         (counts) => counts.map((c) => c.innerText),
       );
-
+      const base64Urls = await convertAllImagesToBase64(productUrls);
       const products: Record<string, string>[] = [];
       for (let i = 0; i < productUrls.length; i++) {
         products.push({
           description: productDesc[i],
           price: productPrices[i],
-          imageUrl: productUrls[i],
+          imageUrl: base64Urls[i],
           ratingCount: productRatingCounts[i],
         });
       }
@@ -96,11 +97,10 @@ export class ScrapingService {
       // });
 
       await browser.close();
+
+      return products;
     } catch (error) {
       console.log(error);
     }
-    return {
-      message: 'Okay',
-    };
   }
 }

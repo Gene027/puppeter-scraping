@@ -13,4 +13,10 @@ export class ScrapingController {
   async scrapBackMarketPrices(): Promise<{ message: string }> {
     return await this.scrapingService.scrapeBackMarket();
   }
+
+  @Get('/walmart')
+  @ApiOperation({ summary: 'Scrape Walmart prices' })
+  async scrapWalmartPrices(): Promise<{ message: string }> {
+    return await this.scrapingService.scrapeWalmartHtml();
+  }
 }
