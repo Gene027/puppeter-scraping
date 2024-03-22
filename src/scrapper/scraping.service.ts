@@ -1,33 +1,33 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import * as path from 'path';
-import { appendToExcel } from '@/utils/append-to-excel';
-import { convertAllImagesToBase64 } from './utils/url-to-data-uri';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
+import { appendToExcel } from "@/utils/append-to-excel";
+import { frozenFoodsQuery, walmartProductSelectors } from "./constant";
+import { convertImageUrlToBase64 } from "./utils/url-to-data-uri";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
 @Injectable()
 export class ScrapingService {
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER)
-    private readonly logger: Logger,
-  ) {}
+  private readonly logger = new Logger(ScrapingService.name);
+  constructor() {}
 
   async scrapeBackMarket(): Promise<any> {
     try {
       const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
       const page = await browser.newPage();
       await page.setViewport({ width: 1280, height: 1024 });
       await page.goto(
-        'https://www.backmarket.com/en-us/search?q=iPhone%2012%20-%20Unlocked',
+        "https://www.backmarket.com/en-us/search?q=iPhone%2012%20-%20Unlocked"
       );
 
       await page.screenshot({
-        type: 'jpeg',
-        path: 'screenshot.jpeg',
+        type: "jpeg",
+        path: "screenshot.jpeg",
         fullPage: true,
       });
 
@@ -36,71 +36,123 @@ export class ScrapingService {
       console.log(error);
     }
     return {
-      message: 'Okay',
+      message: "Okay",
     };
   }
 
-  async scrapeWalmartHtml(): Promise<any> {
+  async scrapeWalmartLiveData(): Promise<any> {
+    const AUTH = `${process.env.BRIGHTDATA_USERNAME}:${process.env.BRIGHTDATA_PASSWORD}`;
+    const SBR_WS_ENDPOINT = `wss://${AUTH}@${process.env.BRIGHTDATA_HOST}`;
+
     try {
-      const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      const browser = await puppeteer.connect({
+        browserWSEndpoint: SBR_WS_ENDPOINT,
       });
+      this.logger.log("Connected to browser");
+
       const page = await browser.newPage();
       await page.setViewport({ width: 1280, height: 1024 });
-      await page.goto(
-        `file:${path.join(__dirname, '..', '..', '/public/test.html')}`,
-        {
-          waitUntil: ['load', 'domcontentloaded'],
-        },
-      );
-      const imagesSelector = 'img.absolute.top-0.left-0';
-      const pricesSelector = 'div.mr1.mr2-xl.b.black.lh-copy.f5.f4-l';
-      const descriptionSelector =
-        'span.normal.dark-gray.mb0.mt1.lh-title.f6.f5-l.lh-copy';
-      const ratingCountsSelector = 'span.sans-serif.gray.f7';
 
-      const productUrls: string[] = await page.$$eval(imagesSelector, (imgs) =>
-        imgs.map((img) => img.src),
-      );
+      for(const product of frozenFoodsQuery) {
+        const { url, category, subCategory, pages } = product;
+        for (let i = 1; i <= pages; i++) {
+          await page.goto(`${url}&page=${i}`, {
+            waitUntil: 'networkidle0',
+            timeout: 2 * 60 * 1000,
+          });
+          this.logger.log(`Navigated to ${url}&page=${i}`);
 
-      const productPrices: string[] = await page.$$eval(
-        pricesSelector,
-        (prices) => prices.map((p) => p.innerText),
-      );
+          // await page.screenshot({
+          //   type: "jpeg",
+          //   path: "screenshot.jpeg",
+          //   fullPage: true,
+          // });
+          // return;
 
-      const productDesc: string[] = await page.$$eval(
-        descriptionSelector,
-        (descs) => descs.map((d) => d.innerText),
-      );
+          const {
+            descriptionSelector,
+            imagesSelector,
+            pricesSelector,
+            ratingSelector,
+            reviewSelector
+          } = walmartProductSelectors;
 
-      const productRatingCounts: string[] = await page.$$eval(
-        ratingCountsSelector,
-        (counts) => counts.map((c) => c.innerText),
-      );
-      const base64Urls = await convertAllImagesToBase64(productUrls);
-      const products: Record<string, string>[] = [];
-      for (let i = 0; i < productUrls.length; i++) {
-        products.push({
-          description: productDesc[i],
-          price: productPrices[i],
-          imageUrl: base64Urls[i],
-          ratingCount: productRatingCounts[i],
-        });
+          const productImgUrls: string[] = await page.$$eval(imagesSelector, (imgs) =>
+            imgs.map((img) => img.src)
+          );
+
+          const productRatings: string[] = await page.$$eval(
+            ratingSelector,
+            (ratings) => ratings.map((r) => r.getAttribute('data-value'))
+          );
+      
+          const productPrices: string[] = await page.$$eval(
+            pricesSelector,
+            (prices) => prices.map((p) => p.innerText)
+          );
+
+          const productDesc: string[] = await page.$$eval(
+            descriptionSelector,
+            (descs) => descs.map((d) => d.innerText)
+          );
+
+          const productReviewCounts: string[] = await page.$$eval(
+            reviewSelector,
+            (reviews) => reviews.map((r) => r.innerText)
+          );
+
+          const data = [productPrices, productDesc, productImgUrls,];
+
+          const arrayLengths = data.map((array) => array.length);
+          const allArraysHaveSameLength = arrayLengths.every(
+            (length) => length === arrayLengths[0],
+          );
+
+          if (allArraysHaveSameLength) {
+            this.logger.log('Data is consistent and can map correctly');
+          } else {
+            this.logger.log('Data is inconsistent and cannot map correctly');
+            console.log(
+              `productPrices: ${productPrices.length} productTitles: ${productDesc.length} productImgUrls: ${productImgUrls.length} productReviewCounts: ${productReviewCounts.length} productRatings: ${productRatings.length}`,
+            );
+            console.log(data);
+            continue;
+          }
+
+          this.logger.log('converting images to base64')
+          const imgDataUri = await Promise.all(productImgUrls.map( async (url) => await convertImageUrlToBase64(url)))
+
+          this.logger.log('Images converted to base64')
+
+          const products: Record<string, string>[] = [];
+          for (let i = 0; i < productDesc.length; i++) {
+            products.push({
+              description: productDesc[i],
+              price: productPrices[i],
+              imageUrl: imgDataUri[i],
+              // imageUrl: productImgUrls[i],
+              reviews: productReviewCounts[i] || 'N/A',
+              rating: productRatings[i] || 'N/A',
+              category,
+              subCategory,
+            });
+          }
+
+          await appendToExcel(products);
+        }
       }
-
-      await appendToExcel(products);
-
-      // await page.screenshot({
-      //   type: 'jpeg',
-      //   path: 'screenshot.jpeg',
-      //   fullPage: true,
-      // });
 
       await browser.close();
 
-      return products;
+      this.logger.log("Browser closed");
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException(
+        `Error scraping walmart: ${error.message}`
+      );
     }
+    return {
+      message: "Okay",
+    };
   }
 }

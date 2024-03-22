@@ -1,35 +1,38 @@
 import axios from 'axios';
-import sharp from 'sharp';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const sharp = require('sharp');
+// const fetch = require('node-fetch');
 
-async function convertImageSrcToBase64(url: string): Promise<string> {
+export async function convertImageUrlToBase64(url: string): Promise<string> {
   try {
     const response = await axios({
+      method: 'get',
       url,
       responseType: 'arraybuffer',
     });
 
-    const imageBuffer = Buffer.from(response.data, 'binary');
-    const base64 = await sharp(imageBuffer)
-      .toBuffer()
-      .then((buffer) => buffer.toString('base64'));
+    const imageBuffer = await sharp(response.data).toBuffer();
+    const base64Image = imageBuffer.toString('base64');
 
-    return `data:image/jpeg;base64,${base64}`;
+    const mimeType = 'image/jpeg'; // Assuming the image is a JPEG;
+    const dataUrl = `data:${mimeType};base64,${base64Image}`;
+
+    return dataUrl;
   } catch (error) {
-    console.error('Error converting image to base64:', error);
-    throw error;
+    console.error('Error converting image to Base64:', error);
   }
 }
 
-export async function convertAllImagesToBase64(
-  urls: string[],
-): Promise<string[]> {
-  try {
-    const base64Images = await Promise.all(
-      urls.map((url) => convertImageSrcToBase64(url)),
-    );
-    return base64Images;
-  } catch (error) {
-    console.error('Error converting images to base64:', error);
-    throw error;
-  }
-}
+
+// async function convertImageUrlToBase64(url) {
+//   try {
+//     const response = await fetch(url);
+//     const buffer = await response.buffer(); // Get a Buffer of the image data
+//     const base64 = buffer.toString('base64'); // Convert the Buffer to a Base64 string
+//     return `data:${response.headers.get('content-type')};base64,${base64}`;
+//   } catch (error) {
+//     console.error('Error converting image to Base64:', error);
+//     return null; // Or handle the error as needed
+//   }
+// }
+

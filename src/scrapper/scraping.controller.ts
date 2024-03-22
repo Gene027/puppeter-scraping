@@ -10,13 +10,13 @@ export class ScrapingController {
 
   @Get('/back-market')
   @ApiOperation({ summary: 'Scrape Backmarket prices' })
-  async scrapBackMarketPrices(): Promise<{ message: string }> {
+  async scrapeBackMarketPrices(): Promise<{ message: string }> {
     return await this.scrapingService.scrapeBackMarket();
   }
 
-  @Get('/walmart')
-  @ApiOperation({ summary: 'Scrape Walmart prices' })
-  async scrapWalmartPrices(): Promise<{ message: string }> {
-    return await this.scrapingService.scrapeWalmartHtml();
+  @Get('/walmart/live')
+  @ApiOperation({ summary: 'Scrape Walmart Live prices' })
+  async scrapeLiveWalmartPrices(): Promise<{ message: string }> {
+    return await this.scrapingService.scrapeWalmartLiveData();
   }
 }
