@@ -1,12 +1,27 @@
 export const walmartProductSelectors = {
-//   imagesSelector: 'img.absolute.top-0.left-0',
   imagesSelector: 'img[data-testid="productTileImage"]',
   pricesSelector: 'div.mr1.mr2-xl.b.black.lh-copy.f5.f4-l',
-//   descriptionSelector: 'span.normal.dark-gray.mb0.mt1.lh-title.f6.f5-l.lh-copy',
   descriptionSelector: 'span[data-automation-id="product-title"]',
   ratingSelector: 'span[data-testid="product-ratings"]',
   reviewSelector: 'span[data-testid="product-reviews"]',
 }
+
+export const walmartHtmlProductSelectors = {
+  imagesSelector: 'img[data-testid="productTileImage"]',
+  pricesSelector: 'div.mr1.mr2-xl.lh-copy.f5.f4-l',
+  descriptionSelector: 'span[data-automation-id="product-title"]',
+  ratingSelector: 'span[data-testid="product-ratings"]',
+  reviewSelector: 'span[data-testid="product-reviews"]',
+}
+
+export const walmartHtmlPages = [
+  {
+    productUrl: 'public/test.html',
+    resource: 'Walmart Html',
+    category: 'Fruits',
+    subCategory: 'Fresh fruits',
+  },
+];
 
 export const frozenFoodsQuery = [
     {

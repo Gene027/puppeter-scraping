@@ -4,8 +4,14 @@ import {
   Logger,
 } from "@nestjs/common";
 import { appendToExcel } from "@/utils/append-to-excel";
-import { frozenFoodsQuery, walmartProductSelectors } from "./constant";
-import { convertImageUrlToBase64 } from "./utils/url-to-data-uri";
+import * as path from "path";
+import {
+  frozenFoodsQuery,
+  walmartHtmlPages,
+  walmartHtmlProductSelectors,
+  walmartProductSelectors,
+} from "./constant";
+// import { convertImageUrlToBase64 } from "./utils/url-to-data-uri";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const puppeteer = require("puppeteer");
 
@@ -14,26 +20,95 @@ export class ScrapingService {
   private readonly logger = new Logger(ScrapingService.name);
   constructor() {}
 
-  async scrapeBackMarket(): Promise<any> {
+  async scrapeHtml() {
     try {
       const browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
       const page = await browser.newPage();
       await page.setViewport({ width: 1280, height: 1024 });
-      await page.goto(
-        "https://www.backmarket.com/en-us/search?q=iPhone%2012%20-%20Unlocked"
-      );
 
-      await page.screenshot({
-        type: "jpeg",
-        path: "screenshot.jpeg",
-        fullPage: true,
+      const { productUrl, resource, category, subCategory } =
+        walmartHtmlPages[0];
+      const {
+        descriptionSelector,
+        imagesSelector,
+        pricesSelector,
+        ratingSelector,
+        reviewSelector,
+      } = walmartHtmlProductSelectors;
+
+      await page.goto(`file:${path.join(__dirname, "..", "..", productUrl)}`, {
+        waitUntil: "networkidle0",
+        timeout: 2 * 60 * 1000,
       });
 
+      this.logger.log(`Navigated to ${productUrl}`);
+
+      const productImgUrls: string[] = await page.$$eval(
+        imagesSelector,
+        (imgs) => imgs.map((img) => img.src)
+      );
+
+      const productRatings: string[] = await page.$$eval(
+        ratingSelector,
+        (ratings) => ratings.map((r) => r.getAttribute("data-value"))
+      );
+
+      const productPrices: string[] = await page.$$eval(
+        pricesSelector,
+        (prices) => prices.map((p) => p.innerText)
+      );
+
+      const productDesc: string[] = await page.$$eval(
+        descriptionSelector,
+        (descs) => descs.map((d) => d.innerText)
+      );
+
+      const productReviewCounts: string[] = await page.$$eval(
+        reviewSelector,
+        (reviews) => reviews.map((r) => r.innerText)
+      );
+
+      const data = [productPrices, productDesc, productImgUrls];
+
+      const arrayLengths = data.map((array) => array.length);
+      const allArraysHaveSameLength = arrayLengths.every(
+        (length) => length === arrayLengths[0]
+      );
+
+      if (allArraysHaveSameLength) {
+        this.logger.log("Data is consistent and can map correctly");
+      } else {
+        this.logger.log("Data is inconsistent and cannot map correctly");
+        console.log(
+          `productPrices: ${productPrices.length} productTitles: ${productDesc.length} productImgUrls: ${productImgUrls.length} productReviewCounts: ${productReviewCounts.length} productRatings: ${productRatings.length}`
+        );
+        console.log(data);
+        return data;
+      }
+
+      const products: Record<string, string>[] = [];
+      for (let i = 0; i < productDesc.length; i++) {
+        products.push({
+          description: productDesc[i],
+          price: productPrices[i],
+          imageUrl: productImgUrls[i],
+          reviews: productReviewCounts[i] || "N/A",
+          rating: productRatings[i] || "N/A",
+          category,
+          subCategory,
+          resource,
+        });
+      }
+
+      await appendToExcel(products);
+
       await browser.close();
+      this.logger.log("Browser closed");
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException("Error scraping HTML");
     }
     return {
       message: "Okay",
@@ -53,11 +128,11 @@ export class ScrapingService {
       const page = await browser.newPage();
       await page.setViewport({ width: 1280, height: 1024 });
 
-      for(const product of frozenFoodsQuery) {
+      for (const product of frozenFoodsQuery) {
         const { url, category, subCategory, pages } = product;
         for (let i = 1; i <= pages; i++) {
           await page.goto(`${url}&page=${i}`, {
-            waitUntil: 'networkidle0',
+            waitUntil: "networkidle0",
             timeout: 2 * 60 * 1000,
           });
           this.logger.log(`Navigated to ${url}&page=${i}`);
@@ -74,18 +149,19 @@ export class ScrapingService {
             imagesSelector,
             pricesSelector,
             ratingSelector,
-            reviewSelector
+            reviewSelector,
           } = walmartProductSelectors;
 
-          const productImgUrls: string[] = await page.$$eval(imagesSelector, (imgs) =>
-            imgs.map((img) => img.src)
+          const productImgUrls: string[] = await page.$$eval(
+            imagesSelector,
+            (imgs) => imgs.map((img) => img.src)
           );
 
           const productRatings: string[] = await page.$$eval(
             ratingSelector,
-            (ratings) => ratings.map((r) => r.getAttribute('data-value'))
+            (ratings) => ratings.map((r) => r.getAttribute("data-value"))
           );
-      
+
           const productPrices: string[] = await page.$$eval(
             pricesSelector,
             (prices) => prices.map((p) => p.innerText)
@@ -101,38 +177,38 @@ export class ScrapingService {
             (reviews) => reviews.map((r) => r.innerText)
           );
 
-          const data = [productPrices, productDesc, productImgUrls,];
+          const data = [productPrices, productDesc, productImgUrls];
 
           const arrayLengths = data.map((array) => array.length);
           const allArraysHaveSameLength = arrayLengths.every(
-            (length) => length === arrayLengths[0],
+            (length) => length === arrayLengths[0]
           );
 
           if (allArraysHaveSameLength) {
-            this.logger.log('Data is consistent and can map correctly');
+            this.logger.log("Data is consistent and can map correctly");
           } else {
-            this.logger.log('Data is inconsistent and cannot map correctly');
+            this.logger.log("Data is inconsistent and cannot map correctly");
             console.log(
-              `productPrices: ${productPrices.length} productTitles: ${productDesc.length} productImgUrls: ${productImgUrls.length} productReviewCounts: ${productReviewCounts.length} productRatings: ${productRatings.length}`,
+              `productPrices: ${productPrices.length} productTitles: ${productDesc.length} productImgUrls: ${productImgUrls.length} productReviewCounts: ${productReviewCounts.length} productRatings: ${productRatings.length}`
             );
             console.log(data);
             continue;
           }
 
-          this.logger.log('converting images to base64')
-          const imgDataUri = await Promise.all(productImgUrls.map( async (url) => await convertImageUrlToBase64(url)))
+          // this.logger.log('converting images to base64')
+          // const imgDataUri = await Promise.all(productImgUrls.map( async (url) => await convertImageUrlToBase64(url)))
 
-          this.logger.log('Images converted to base64')
+          // this.logger.log('Images converted to base64')
 
           const products: Record<string, string>[] = [];
           for (let i = 0; i < productDesc.length; i++) {
             products.push({
               description: productDesc[i],
               price: productPrices[i],
-              imageUrl: imgDataUri[i],
-              // imageUrl: productImgUrls[i],
-              reviews: productReviewCounts[i] || 'N/A',
-              rating: productRatings[i] || 'N/A',
+              // imageUrl: imgDataUri[i],
+              imageUrl: productImgUrls[i],
+              reviews: productReviewCounts[i] || "N/A",
+              rating: productRatings[i] || "N/A",
               category,
               subCategory,
             });

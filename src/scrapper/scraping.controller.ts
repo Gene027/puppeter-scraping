@@ -8,10 +8,10 @@ import { ScrapingService } from './scraping.service';
 export class ScrapingController {
   constructor(private readonly scrapingService: ScrapingService) {}
 
-  @Get('/back-market')
-  @ApiOperation({ summary: 'Scrape Backmarket prices' })
-  async scrapeBackMarketPrices(): Promise<{ message: string }> {
-    return await this.scrapingService.scrapeBackMarket();
+  @Get('/walmart')
+  @ApiOperation({ summary: 'Scrape walmart html prices' })
+  async scrapeBackMarketPrices(): Promise<any> {
+    return await this.scrapingService.scrapeHtml();
   }
 
   @Get('/walmart/live')
