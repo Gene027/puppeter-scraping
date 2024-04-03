@@ -36,7 +36,7 @@ export async function scrapeData(html: string, download: boolean = true) {
             '[data-automation-id="product-title"]'
           );
           const priceElement: any = element.querySelector(
-            '[data-automation-id="product-price"] span.f2'
+            '[data-automation-id="product-price"] div.mr1 mr2-xl b black lh-copy f5 f4-l'
           );
 
           const imageElement: any = element.querySelector(
@@ -50,25 +50,29 @@ export async function scrapeData(html: string, download: boolean = true) {
             '[data-testid="product-reviews"]'
           );
           if (
-            titleElement &&
-            priceElement &&
-            imageElement &&
-            ratingElement &&
-            reviewElement
+            titleElement
+            //  &&
+            // priceElement
+             &&
+            imageElement 
+            // &&
+            // ratingElement
+            //  &&
+            // reviewElement
           ) {
             const title = titleElement.innerText;
-            const price = priceElement.innerText;
+            // const price = priceElement.innerText;
             const image = imageElement.getAttribute("src");
-            const rating = ratingElement.getAttribute("data-value");
-            const review = reviewElement.innerText;
+            // const rating = ratingElement.getAttribute("data-value");
+            // const review = reviewElement.innerText;
 
-            if (title && price) {
+            if (title) {
               items.push({
                 title,
-                price,
+                // price,
                 image,
-                rating,
-                review,
+                // rating,
+                // review,
               });
             }
           } else {
