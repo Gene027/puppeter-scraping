@@ -72,3 +72,5 @@ build
 #outputs
 war-engine.xlsx
 test*.*
+/public/*
+screenshot.jpeg
