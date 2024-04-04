@@ -84,7 +84,7 @@ export async function scrapeData(html: string, download: boolean = true) {
     if (rawProducts.length === 0) {
       throw new Error("No products found");
     }
-    console.log(rawProducts);
+
     const result = await appendToExcel(rawProducts, download);
     return result;
   } catch (error) {
