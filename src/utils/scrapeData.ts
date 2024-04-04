@@ -62,7 +62,7 @@ export async function scrapeData(html: string, download: boolean = true) {
               : "";
             const review = reviewElement ? reviewElement.innerText : "";
 
-            if (title) {
+            if (title && price) {
               items.push({
                 title,
                 price,
