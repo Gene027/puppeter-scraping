@@ -13,19 +13,19 @@ export async function scrapeData(html: string, download: boolean = true) {
 
     if (download) {
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded", "networkidle0"],
       });
     } else {
       await page.goto(`file:${path.join(__dirname, "..", "..", html)}`, {
-        waitUntil: ["load", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded", "networkidle0"],
       });
     }
 
-    await page.screenshot({
-      type: "jpeg",
-      path: "screenshot.jpeg",
-      fullPage: true,
-    });
+    // await page.screenshot({
+    //   type: "jpeg",
+    //   path: "screenshot.jpeg",
+    //   fullPage: true,
+    // });
 
     const rawProducts = await page.evaluate(() => {
       const items: any[] = [];
@@ -35,8 +35,9 @@ export async function scrapeData(html: string, download: boolean = true) {
           const titleElement: any = element.querySelector(
             '[data-automation-id="product-title"]'
           );
+
           const priceElement: any = element.querySelector(
-            '[data-automation-id="product-price"] span.f2'
+            '[data-automation-id="product-price"]'
           );
 
           const imageElement: any = element.querySelector(
@@ -46,21 +47,20 @@ export async function scrapeData(html: string, download: boolean = true) {
           const ratingElement: any = element.querySelector(
             '[data-testid="product-ratings"]'
           );
+
           const reviewElement: any = element.querySelector(
             '[data-testid="product-reviews"]'
           );
-          if (
-            titleElement &&
-            priceElement &&
-            imageElement &&
-            ratingElement &&
-            reviewElement
-          ) {
+          if (titleElement && priceElement && imageElement) {
             const title = titleElement.innerText;
-            const price = priceElement.innerText;
+            const price = priceElement.querySelector(
+              "div.mr1.mr2-xl.b.black.lh-copy.f5.f4-l"
+            ).innerText;
             const image = imageElement.getAttribute("src");
-            const rating = ratingElement.getAttribute("data-value");
-            const review = reviewElement.innerText;
+            const rating = ratingElement
+              ? ratingElement.getAttribute("data-value")
+              : "";
+            const review = reviewElement ? reviewElement.innerText : "";
 
             if (title && price) {
               items.push({
