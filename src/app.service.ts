@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { concatUint8Arrays } from "./utils/streamToBuffer";
 import { scrapeData } from "./utils/scrapeData";
-import e from "express";
 
 @Injectable()
 export class AppService {
@@ -11,23 +10,9 @@ export class AppService {
 
   async scrapeHtml(file: any): Promise<Buffer> {
     try {
-      const reader = file.getReader();
-
-      const chunks = [];
-      let streamComplete = false;
-
-      while (!streamComplete) {
-        const { value, done } = await reader.read();
-        if (done) {
-          streamComplete = true;
-        } else {
-          chunks.push(value);
-        }
-      }
-
-      const data = new TextDecoder().decode(concatUint8Arrays(chunks));
-
-      const resultBuffer = await scrapeData(data);
+      const data: string = file.buffer.toString('utf-8');
+      
+      const resultBuffer = await scrapeData(data, true);
 
       return resultBuffer as Buffer;
     } catch (error: any) {
