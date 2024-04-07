@@ -1,4 +1,4 @@
-FROM node:14-slim
+FROM node:18-slim
 
 RUN apt-get update && apt-get install -y wget --no-install-recommends \
     && apt-get install -y libxss1 \
