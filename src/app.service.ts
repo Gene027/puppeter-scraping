@@ -109,7 +109,7 @@ export class AppService {
             };
           });
 
-          appendToExcel(products);
+          await appendToExcel(products);
 
           try {
             await this.productPriceRepo.insert(products);
