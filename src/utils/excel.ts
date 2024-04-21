@@ -12,18 +12,22 @@ export async function appendToExcel(
 
   try {
     await workbook.xlsx.readFile(filePath);
+    console.log('Excel file found, updating it.')
   } catch (err) {
     console.log("File not found, creating a new one.");
     workbook.addWorksheet("Walmart Products");
   }
 
   const worksheet = workbook.getWorksheet("Walmart Products");
-  const columns: string[] = Object.keys(data[0]);
-  const userReadableColumns: string[] = columns.map((field) => camelCaseToUserReadable(field));
-
   if (!worksheet) {
-    throw new Error("Worksheet 'Walmart Products' not found");
+    console.log('Worksheet not found, creating a new one.');
+    workbook.addWorksheet("Walmart Products");
   }
+
+  const columns: string[] = Object.keys(data[0]);
+  const userReadableColumns: string[] = columns.map((field) =>
+    camelCaseToUserReadable(field)
+  );
 
   if (worksheet.rowCount === 0) {
     userReadableColumns.forEach((column, index) => {
@@ -44,20 +48,20 @@ export async function appendToExcel(
     });
   }
 
-  if(download) {
+  if (download) {
     await workbook.xlsx
-    .writeFile(filePath)
-    .then(() => {
-      console.log("Excel file updated successfully.");
-    })
-    .catch((error: any) => {
-      console.error("Error updating Excel file:", error);
-    });
+      .writeFile(filePath)
+      .then(() => {
+        console.log("Excel file updated successfully.");
+      })
+      .catch((error: any) => {
+        console.error("Error updating Excel file:", error);
+      });
 
     const buffer = await workbook.xlsx.writeBuffer();
     return buffer;
   }
-  
+
   await workbook.xlsx
     .writeFile(filePath)
     .then(() => {

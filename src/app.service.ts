@@ -9,7 +9,7 @@ import {
   RawWalmartData,
 } from "@/interfaces/scraping.interface";
 import { appendToExcel } from "./utils/excel";
-import { frozenFoodsQuery } from "./constants";
+import { frozenFoodsQuery, fruitsAndVegetablesQuery } from "./constants";
 
 @Injectable()
 export class AppService {
@@ -26,7 +26,7 @@ export class AppService {
     const AUTH = `${process.env.BRIGHTDATA_USERNAME}:${process.env.BRIGHTDATA_PASSWORD}`;
     const SBR_WS_ENDPOINT = `wss://${AUTH}@${process.env.BRIGHTDATA_HOST}`;
 
-    for (const walmartLiveProduct of frozenFoodsQuery) {
+    for (const walmartLiveProduct of fruitsAndVegetablesQuery) {
       const pages = walmartLiveProduct.pages || 1;
 
       for (let i = 1; i <= pages; i++) {
@@ -91,6 +91,7 @@ export class AppService {
             return items;
           });
 
+          await browser.close();
           console.log(`Found ${rawProducts.length} products`);
           if (rawProducts.length == 0) {
             continue;
@@ -116,8 +117,6 @@ export class AppService {
           } catch (error) {
             console.log(error);
           }
-
-          await browser.close();
 
         } catch (error) {
           console.log(error);
