@@ -45,6 +45,15 @@ export async function appendToExcel(
   }
 
   if(download) {
+    await workbook.xlsx
+    .writeFile(filePath)
+    .then(() => {
+      console.log("Excel file updated successfully.");
+    })
+    .catch((error: any) => {
+      console.error("Error updating Excel file:", error);
+    });
+
     const buffer = await workbook.xlsx.writeBuffer();
     return buffer;
   }

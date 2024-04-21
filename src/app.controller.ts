@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, Req, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
 import { AppService } from "./app.service";
 import { ApiOperation } from "@nestjs/swagger";
 import { Response, Request } from "express";
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller()
 export class AppController {
@@ -15,8 +24,11 @@ export class AppController {
 
   @ApiOperation({ summary: "Scrape HTML" })
   @Post("scrape")
-  @UseInterceptors(FileInterceptor('file'))
-  async scrapeHtml(@UploadedFile() file: any, @Res() res: Response): Promise<any> {
+  @UseInterceptors(FileInterceptor("file"))
+  async scrapeHtml(
+    @UploadedFile() file: any,
+    @Res() res: Response
+  ): Promise<any> {
     const buffer = await this.appService.scrapeHtml(file);
     res.setHeader(
       "Content-Type",
@@ -27,6 +39,13 @@ export class AppController {
       `attachment; filename=walmart-data.xlsx`
     );
     res.send(buffer);
+  }
+
+  @ApiOperation({ summary: "Scrape walmart" })
+  @Get("scrape")
+  async scrapeWalmart(): Promise<any> {
+    this.appService.scrapeWalmart();
+    return "Scraping walmart";
   }
 
   @ApiOperation({ summary: "Scrape test HTML" })
