@@ -1,3 +1,10 @@
+export interface Query {
+  url: string;
+  category: string;
+  subCategory: string;
+  pages: number;
+}
+
 export const walmartHtmlPages = [
   {
     productUrl: "public/test.html",
@@ -7,7 +14,7 @@ export const walmartHtmlPages = [
   },
 ];
 
-export const frozenFoodsQuery = [
+export const frozenFoodsQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/browse/grocery/frozen-food/frozen-meat-seafood-alternatives/10019_6000194326337_6000194327396?icid=landing%2Fcp_page_grocery_frozen_meat_seafood_and_alternatives_21629_5LMIE96WVC",
     category: "Frozen Foods",
@@ -70,7 +77,7 @@ export const frozenFoodsQuery = [
   },
 ];
 
-export const fruitsAndVegetablesQuery = [
+export const fruitsAndVegetablesQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/browse/grocery/fruits-vegetables/fresh-fruits/10019_6000194327370_6000194327411?icid=cp_l2_page_grocery_fresh_fruits_shop_all_22968_7UGSWL56UX",
     category: "Fruits",
@@ -109,7 +116,7 @@ export const fruitsAndVegetablesQuery = [
   },
 ];
 
-const diaryAndEggsQuery = [
+const diaryAndEggsQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/grocery/dairy-eggs/dairy/N-3854",
     category: "Dairy",
@@ -154,7 +161,7 @@ const diaryAndEggsQuery = [
   },
 ];
 
-const meatAndSeafoodQuery = [
+const meatAndSeafoodQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/grocery/meat-seafood/beef/N-3860",
     category: "Meat",
@@ -187,7 +194,7 @@ const meatAndSeafoodQuery = [
   },
 ];
 
-const pantryQuery = [];
+const pantryQuery: Query[] = [];
 
 // export const breadAndBakeryQuery = [];
 // export const snacksAndCandyQuery = [];
