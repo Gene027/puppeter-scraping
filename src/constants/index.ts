@@ -1,5 +1,3 @@
-import { url } from "inspector";
-
 export const walmartHtmlPages = [
   {
     productUrl: "public/test.html",
@@ -71,7 +69,8 @@ export const frozenFoodsQuery = [
     pages: 2,
   },
 ];
-const fruitsAndVegetablesQuery = [
+
+export const fruitsAndVegetablesQuery = [
   {
     url: "https://www.walmart.ca/en/browse/grocery/fruits-vegetables/fresh-fruits/10019_6000194327370_6000194327411?icid=cp_l2_page_grocery_fresh_fruits_shop_all_22968_7UGSWL56UX",
     category: "Fruits",
