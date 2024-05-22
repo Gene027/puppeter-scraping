@@ -9,7 +9,7 @@ import {
   RawWalmartData,
 } from "@/interfaces/scraping.interface";
 import { appendToExcel } from "./utils/excel";
-import { pantryQuery } from "./constants";
+import { breadAndBakeryQuery, pantryQuery } from "./constants";
 
 @Injectable()
 export class AppService {
@@ -26,7 +26,7 @@ export class AppService {
     const AUTH = `${process.env.BRIGHTDATA_USERNAME}:${process.env.BRIGHTDATA_PASSWORD}`;
     const SBR_WS_ENDPOINT = `wss://${AUTH}@${process.env.BRIGHTDATA_HOST}`;
 
-    for (const walmartLiveProduct of pantryQuery) {
+    for (const walmartLiveProduct of breadAndBakeryQuery) {
       const pages = walmartLiveProduct.pages || 1;
 
       for (let i = 1; i <= pages; i++) {

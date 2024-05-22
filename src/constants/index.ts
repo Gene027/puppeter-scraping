@@ -239,6 +239,14 @@ export const pantryQuery: Query[] = [
   },
 ];
 
+export const breadAndBakeryQuery: Query[] = [
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/bread-bakery/10019_6000194327359?icid=cp_l2_page_grocery_shop_all_23096_PWP4HZCCH6",
+    category: "Bread & Bakery",
+    subCategory: "Bread & Bakery",
+    pages: 12,
+  },
+];
 // export const breadAndBakeryQuery = [];
 // export const snacksAndCandyQuery = [];
 // export const drinksQuery = [];
