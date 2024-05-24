@@ -71,3 +71,15 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Migration
+Please use npm to avoid errors
+
+Generate
+npm run typeorm:generate-migration --name=CreateUser
+
+(CreateUser should be the name of your migration)
+
+Run migration
+npm run typeorm:run-migrations
+
