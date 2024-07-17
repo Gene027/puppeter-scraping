@@ -42,7 +42,7 @@ export class AppController {
   }
 
   @ApiOperation({ summary: "Scrape walmart" })
-  @Get("scrape")
+  @Get("scrape/walmart")
   async scrapeWalmart(): Promise<any> {
     this.appService.scrapeWalmart();
     return "Scraping walmart";

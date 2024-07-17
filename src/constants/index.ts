@@ -14,7 +14,7 @@ export const walmartHtmlPages = [
   },
 ];
 
-export const frozenFoodsQuery: Query[] = [
+const frozenFoodsQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/browse/grocery/frozen-food/frozen-meat-seafood-alternatives/10019_6000194326337_6000194327396?icid=landing%2Fcp_page_grocery_frozen_meat_seafood_and_alternatives_21629_5LMIE96WVC",
     category: "Frozen Foods",
@@ -77,7 +77,7 @@ export const frozenFoodsQuery: Query[] = [
   },
 ];
 
-export const fruitsAndVegetablesQuery: Query[] = [
+const fruitsAndVegetablesQuery: Query[] = [
   {
     url: "https://www.walmart.ca/en/browse/grocery/fruits-vegetables/fresh-fruits/10019_6000194327370_6000194327411?icid=cp_l2_page_grocery_fresh_fruits_shop_all_22968_7UGSWL56UX",
     category: "Fruits",
@@ -118,84 +118,135 @@ export const fruitsAndVegetablesQuery: Query[] = [
 
 const diaryAndEggsQuery: Query[] = [
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/dairy/N-3854",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/dairy-milk/10019_6000194327369_6000194327399?icid=cp_l1_page_grocery_lhn_milk_58846_W7E3NNFBVV",
     category: "Dairy",
     subCategory: "Milk",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/dairy/N-3854",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/cheese/10019_6000194327369_6000194327377?icid=cp_l1_page_grocery_lhn_cheese_58847_K2C2FP9TR5",
     category: "Dairy",
     subCategory: "Cheese",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/eggs/N-3855",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/eggs-egg-substitutes/10019_6000194327369_6000194327389?icid=cp_l1_page_grocery_lhn_eggs_58851_XS2AI93TDK",
     category: "Dairy",
     subCategory: "Eggs",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/yogurt/N-3856",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/yogurt/10019_6000194327369_6000194327390?icid=cp_l1_page_grocery_lhn_yogurt_58848_KMN8NUF4Y0",
     category: "Dairy",
     subCategory: "Yogurt",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/butter-margarine/N-3857",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/butter-margarine/10019_6000194327369_6000194327387?icid=cp_l1_page_grocery_lhn_butter_58850_FOSGKIVHQC",
     category: "Dairy",
     subCategory: "Butter & Margarine",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/cream/N-3858",
+    url: "https://www.walmart.ca/en/browse/grocery/dairy-eggs/cream-creamers/10019_6000194327369_6000194349396?icid=cp_l1_page_grocery_lhn_cream_58849_9T65N4SM7D",
     category: "Dairy",
     subCategory: "Cream",
-    pages: 1,
-  },
-  {
-    url: "https://www.walmart.ca/en/grocery/dairy-eggs/cheese/N-3859",
-    category: "Dairy",
-    subCategory: "Cheese",
     pages: 1,
   },
 ];
 
 const meatAndSeafoodQuery: Query[] = [
   {
-    url: "https://www.walmart.ca/en/grocery/meat-seafood/beef/N-3860",
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/fresh-beef/10019_6000194327357_6000194327394?icid=cp_l1_page_grocery_lhn_fresh_beef_58854_9JSI1ZFLLJ",
     category: "Meat",
-    subCategory: "Beef",
+    subCategory: "Fresh Beef",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/meat-seafood/chicken/N-3861",
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/fresh-chicken-turkey/10019_6000194327357_6000194327409?icid=cp_l1_page_grocery_lhn_fresh_chicken_58853_F34CQ8YNJH",
     category: "Meat",
-    subCategory: "Chicken",
+    subCategory: "Chicken & Turkey",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/meat-seafood/pork/N-3862",
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/fresh-pork/10019_6000194327357_6000194327395?icid=cp_l1_page_grocery_lhn_fresh_pork_58855_JDF0XS3ZWF",
     category: "Meat",
     subCategory: "Pork",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/meat-seafood/seafood/N-3863",
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/fresh-fish-seafood/10019_6000194327357_6000194327410?icid=cp_l1_page_grocery_lhn_fresh_fish_58856_23GX5M7RQE",
     category: "Meat",
-    subCategory: "Seafood",
+    subCategory: "Fresh Seafood & Fish",
     pages: 1,
   },
   {
-    url: "https://www.walmart.ca/en/grocery/meat-seafood/vegetarian-meat-alternatives/N-3864",
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/fresh-sausages/10019_6000194327357_6000204985034?icid=cp_l1_page_grocery_lhn_fresh_sausages_58857_7XZT7EJSKA",
     category: "Meat",
-    subCategory: "Vegetarian meat alternatives",
+    subCategory: "Fresh Sausages",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/meat-seafood-alternatives/hot-dogs/10019_6000194327357_6000200207254?icid=cp_l1_page_grocery_lhn_hot_dogs_58858_R8H32R4HO8",
+    category: "Meat",
+    subCategory: "Hot Dogs",
     pages: 1,
   },
 ];
 
-const pantryQuery: Query[] = [];
+export const pantryQuery: Query[] = [
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/dry-pasta-noodles/10019_6000194326346_6000194329528?icid=cp_l1_page_grocery_dry_pasta_noodles_lhn_76445_7X6387D1NU",
+    category: "Pantry",
+    subCategory: "Dry pasta & noodles",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/rice-grains/10019_6000194326346_6000194329559?icid=cp_l1_page_grocery_rice_grains_lhn_76446_EH27I7NUIL",
+    category: "Pantry",
+    subCategory: "Rice & grains",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/dried-beans-lentils-peas/10019_6000194326346_6000194329558?icid=cp_l1_page_grocery_dried_beans_lentils_lhn_76447_3TMKJC24FQ",
+    category: "Pantry",
+    subCategory: "Dried beans, lentils & peas",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/cereal-breakfast/10019_6000194326346_6000194328506?icid=cp_l1_page_grocery_lhn_cereal_breakfast_58861_FQVFXJ2FIB",
+    category: "Pantry",
+    subCategory: "Cereal & breakfast",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/canned-food/10019_6000194326346_6000194328515?icid=cp_l1_page_grocery_lhn_canned_food_58862_BJJYSYIJHI",
+    category: "Pantry",
+    subCategory: "Canned food",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/instants-meals-sides/10019_6000194326346_6000202444928?icid=cp_l1_page_grocery_lhn_easy_meals_58864_UBML71W591",
+    category: "Pantry",
+    subCategory: "Easy meals & Instant sides",
+    pages: 1,
+  },
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/pantry-food/sauces-spices-marinades/10019_6000194326346_6000194328520?icid=cp_l1_page_grocery_lhn_sauces_spices_58865_WFMZJ79E5A",
+    category: "Pantry",
+    subCategory: "Sauces, spices & marinades",
+    pages: 1,
+  },
+];
 
+export const breadAndBakeryQuery: Query[] = [
+  {
+    url: "https://www.walmart.ca/en/browse/grocery/bread-bakery/10019_6000194327359?icid=cp_l2_page_grocery_shop_all_23096_PWP4HZCCH6",
+    category: "Bread & Bakery",
+    subCategory: "Bread & Bakery",
+    pages: 12,
+  },
+];
 // export const breadAndBakeryQuery = [];
 // export const snacksAndCandyQuery = [];
 // export const drinksQuery = [];
